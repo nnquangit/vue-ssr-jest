@@ -33,6 +33,10 @@ module.exports = function setupDevServer(app, cb) {
       modules: false,
       children: false,
       entrypoints: false,
+    },
+    watchOptions: {
+      aggregateTimeout: 300,
+      poll: 1000
     }
   })
   app.use(devMiddleware)

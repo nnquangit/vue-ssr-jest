@@ -18,7 +18,7 @@ const config = {
   output: {
     path: resolve('../public'),
     publicPath: '/public/',
-    filename: '[name].[chunkhash].js'
+    filename: '[name].[hash].js'
   },
   // optimization: {
   //   runtimeChunk: {name: 'rtm'},
