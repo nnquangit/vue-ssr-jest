@@ -8,6 +8,5 @@ vue-loader css-loader vue-template-compiler
 
 express lru-cache serve-favicon
 cross-env rimraf compression autoprefixer
-extract-text-webpack-plugin mini-css-extract-plugin
-sw-precache-webpack-plugin webpack-node-externals
+mini-css-extract-plugin sw-precache-webpack-plugin webpack-node-externals
 

@@ -4,6 +4,8 @@ const MFS = require('memory-fs')
 const clientConfig = require('./webpack.client.config')
 const serverConfig = require('./webpack.server.config')
 
+process.traceDeprecation = true
+
 module.exports = function setupDevServer(app, cb) {
   let bundle, clientManifest
   let resolve
@@ -21,6 +23,7 @@ module.exports = function setupDevServer(app, cb) {
   clientConfig.output.filename = '[name].js'
   clientConfig.plugins.push(
     new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
   )
 
@@ -59,7 +62,6 @@ module.exports = function setupDevServer(app, cb) {
   const mfs = new MFS()
   serverCompiler.outputFileSystem = mfs
   serverCompiler.watch({}, (err, stats) => {
-    console.log('Watchhhhhhhhhhhh');
     if (err) throw err
     stats = stats.toJson()
     stats.errors.forEach(err => console.error(err))

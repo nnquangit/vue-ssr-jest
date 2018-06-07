@@ -10,17 +10,6 @@ const config = merge(base, {
     app: './src/entry-client.js'
   },
   optimization: {
-    minimizer: [
-      new UglifyJSPlugin({
-        uglifyOptions: {
-          warnings: false,
-          compress: true,
-          output: {
-            comments: false,
-          },
-        }
-      })
-    ],
     runtimeChunk: true,
     splitChunks: {
       chunks: "async",
@@ -42,23 +31,57 @@ const config = merge(base, {
       }
     }
   },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: "async",
+  //     minSize: 30000,
+  //     minChunks: 1,
+  //     maxAsyncRequests: 5,
+  //     maxInitialRequests: 3,
+  //     automaticNameDelimiter: '~',
+  //     name: true,
+  //     cacheGroups: {
+  //       vendors: {
+  //         name: 'vendors',
+  //         test: /[\\/]node_modules[\\/]/,
+  //         chunks: 'all',
+  //         priority: -10
+  //       },
+  //       styles: {
+  //         name: 'styles',
+  //         test: /\.css$/,
+  //         chunks: 'all',
+  //         enforce: true
+  //       },
+  //       default: {
+  //         minChunks: 2,
+  //         priority: -20,
+  //         reuseExistingChunk: true
+  //       }
+  //     }
+  //   },
+  //   runtimeChunk: {name: 'runtime'},
+  //   // noEmitOnErrors: true,
+  //   namedModules: true,
+  //   namedChunks: true,
+  //   minimize: true,
+  //   minimizer: [
+  //     new UglifyJSPlugin({
+  //       uglifyOptions: {
+  //         warnings: false,
+  //         compress: true,
+  //         output: {
+  //           comments: false,
+  //         },
+  //       }
+  //     })
+  //   ],
+  // },
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
       'process.env.VUE_ENV': '"client"'
     }),
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: 'vendor',
-    //   minChunks: function (module) {
-    //     return (
-    //       /node_modules/.test(module.context) &&
-    //       !/\.css$/.test(module.request)
-    //     )
-    //   }
-    // }),
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: 'manifest'
-    // }),
     new VueSSRClientPlugin()
   ]
 })

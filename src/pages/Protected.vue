@@ -2,11 +2,15 @@
     <b-container class="my-3">
         <b-jumbotron>
             <template slot="header">
-                Wellcome page
+                Protected Page
             </template>
         </b-jumbotron>
     </b-container>
 </template>
 <script>
-  export default {}
+  import {AuthMix} from '../mixins'
+
+  export default {
+    mixins: [AuthMix]
+  }
 </script>

@@ -1,32 +1,37 @@
 const path = require('path')
 const webpack = require('webpack')
 const vueConfig = require('./vue-loader.config')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const {VueLoaderPlugin} = require('vue-loader')
-// const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production'
 const resolve = (file) => path.resolve(__dirname, file)
 
 const config = {
-  devtool: false,//isProd ? false : '#source-map',
+  devtool: isProd ? false : '#cheap-module-eval-source-map',
   mode: isProd ? 'production' : 'development',
   performance: {
-    maxEntrypointSize: 300000,
+    maxEntrypointSize: 1024 * 1024,
+    maxAssetSize: 500 * 1024,
     hints: isProd ? 'warning' : false
+  },
+  optimization: {
+    minimizer: [
+      new UglifyJSPlugin({uglifyOptions: {warnings: false, compress: true, output: {comments: false}}})
+    ],
+    noEmitOnErrors: true,
   },
   output: {
     path: resolve('../public'),
-    publicPath: '/public/',
+    publicPath: '/',
     filename: '[name].[hash].js'
   },
-  // optimization: {
-  //   runtimeChunk: {name: 'rtm'},
-  //   splitChunks: {chunks: 'all'}
-  // },
   resolve: {
     extensions: ['*', '.js', '.json', '.vue'],
     alias: {
+      '@': resolve('src'),
       'vue$': 'vue/dist/vue.common.js'
     }
   },
@@ -36,7 +41,9 @@ const config = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: vueConfig
+        options: {
+          hotReload: true
+        }
       },
       {
         test: /\.js$/,
@@ -45,40 +52,37 @@ const config = {
       },
       {
         test: /\.css$/,
-        loader: ['vue-style-loader', 'css-loader']
+        loader: ['vue-style-loader', 'css-loader'],//MiniCssExtractPlugin.loader
       },
       {
         test: /\.styl$/,
         loader: ['vue-style-loader', 'css-loader', 'stylus-loader']
       },
       {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {limit: 10000, name: 'fonts/[name].[hash:7].[ext]'}
+      },
+      {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
-        query: {
-          limit: 10000,
-          name: 'img/[name].[hash:7].[ext]'
-        }
+        query: {limit: 10000, name: 'img/[name].[hash:7].[ext]'}
       }
     ]
   },
   plugins: [
-    // new ExtractTextPlugin({
-    //   filename: 'common.[chunkhash].css'
+    new HardSourceWebpackPlugin(),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      "window.jQuery": "jquery"
+    }),
+    // new MiniCssExtractPlugin({
+    //   filename: "[name].[hash].css",
+    //   chunkFilename: "[id].[hash].css"
     // }),
     new VueLoaderPlugin(),
   ]
 }
-
-// if (isProd) {
-//   config.plugins.push(new UglifyJSPlugin({
-//     uglifyOptions: {
-//       warnings: false,
-//       compress: true,
-//       output: {
-//         comments: false,
-//       },
-//     }
-//   }))
-// }
 
 module.exports = config
