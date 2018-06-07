@@ -6,6 +6,7 @@
             <b-collapse is-nav id="nav_collapse">
                 <b-navbar-nav>
                     <b-nav-item to="/protected">Protected</b-nav-item>
+                    <b-nav-item to="/serverrender">ServerRender</b-nav-item>
                 </b-navbar-nav>
                 <no-ssr>
                     <b-navbar-nav class="ml-auto">

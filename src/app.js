@@ -6,6 +6,7 @@ import {createRouter} from './router'
 //Plugins
 import './components'
 import './plugins/bootstrap'
+import './assets/app.css'
 
 export function createApp(ssrContext) {
   const store = createStore()

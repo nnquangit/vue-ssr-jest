@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import * as Cookies from 'js-cookie'
 import auth from './auth'
+import users from './users'
 
 Vue.use(Vuex)
 
@@ -29,7 +30,7 @@ const persistedState = createPersistedState({
 
 export function createStore() {
   return new Vuex.Store({
-    modules: {auth},
+    modules: {auth, users},
     plugins: [restoreState, persistedState]
   })
 }

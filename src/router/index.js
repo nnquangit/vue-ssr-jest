@@ -3,6 +3,7 @@ import Router from 'vue-router'
 // Public
 import Home from '../pages/Home.vue'
 import Protected from '../pages/Protected.vue'
+import ServerRender from '../pages/ServerRender.vue'
 
 Vue.use(Router)
 
@@ -14,6 +15,7 @@ export function createRouter() {
     routes: [
       {path: '/', component: Home},
       {path: '/protected', component: Protected},
+      {path: '/serverrender', component: ServerRender},
     ]
   })
 
