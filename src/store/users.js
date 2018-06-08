@@ -1,5 +1,3 @@
-import {client} from '../plugins/axios'
-
 export const actionsConst = {
   list: {
     FETCH: 'USERS_LIST_FETCH',
@@ -9,13 +7,13 @@ export const actionsConst = {
 }
 
 const state = {
-  list: {fetch: false, data: []}
+  list: {fetch: false, results: [], info: {}}
 }
 
 const actions = {
-  getUsers({commit, state}, page = 1) {
+  getUsers({commit, state, rootState: {api}}, page = 1) {
     commit(actionsConst.list.FETCH)
-    return client.get('https://randomuser.me/api/?results=10&nat=us&page=' + page)
+    return api.get('https://randomuser.me/api/?results=10&nat=us&page=' + page)
       .then(res => {
         commit(actionsConst.list.FETCH_SUCCESS, res)
         return res
@@ -29,12 +27,13 @@ const actions = {
 
 const mutations = {
   [actionsConst.list.FETCH]: (state) => state.list.fetch = true,
-  [actionsConst.list.FETCH_SUCCESS]: (state, res) => state.list = {fetch: false, data: res.data.results || []},
+  [actionsConst.list.FETCH_SUCCESS]: (state, res) => state.list = {fetch: false, ...res.data},
   [actionsConst.list.FETCH_FAIL]: (state) => state.list.fetch = false,
 }
 
 const getters = {
-  usersList: (state) => state.list.data,
+  usersList: (state) => state.list.results,
+  usersListInfo: (state) => state.list.info,
 }
 
 export default {state, actions, mutations, getters}

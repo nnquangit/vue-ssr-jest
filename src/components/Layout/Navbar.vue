@@ -8,13 +8,13 @@
                     <b-nav-item to="/protected">Protected</b-nav-item>
                     <b-nav-item to="/serverrender">ServerRender</b-nav-item>
                 </b-navbar-nav>
-                <no-ssr>
+                <app-nossr>
                     <b-navbar-nav class="ml-auto">
                         <b-nav-item @click="$root.$emit('modalLogin:show','/')" v-if="!isLoggedIn">Sign In</b-nav-item>
                         <b-nav-item v-if="isLoggedIn">{{currentUser.fullname}}</b-nav-item>
                         <b-nav-item v-if="isLoggedIn" @click="signout()">Sign Out</b-nav-item>
                     </b-navbar-nav>
-                </no-ssr>
+                </app-nossr>
             </b-collapse>
         </b-container>
     </b-navbar>

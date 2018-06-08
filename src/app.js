@@ -7,13 +7,27 @@ import {createRouter} from './router'
 import './components'
 import './plugins/bootstrap'
 import './assets/app.css'
+//Service
+import {createStoreStorage} from './services/storestorage'
+import {createApi} from './services/api'
 
 export function createApp(ssrContext) {
-  const store = createStore()
+  const api = createApi()
   const router = createRouter()
+  const store = createStore(createStoreStorage(ssrContext))
 
+  //Attach service to store.state
   sync(store, router)
-  const app = new Vue({router, store, ssrContext, render: h => h(Master)})
+  store.replaceState({...store.state, api})
+  api.interceptors.request.use((config) => {
+    if (store.getters.isLoggedIn) {
+      let {token} = store.getters.currentUser;
+      config.headers.common['Authorization'] = token;
+    }
+    return config
+  }, (error) => Promise.reject(error));
 
-  return {app, router, store}
+  const app = new Vue({router, store, ssrContext, api, render: h => h(Master)})
+
+  return {app, router, store, api}
 }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export function createAxios(cookies) {
+export function createApi() {
   return axios.create({
     // baseURL: '/',
     // withCredentials: true,

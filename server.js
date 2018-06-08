@@ -2,10 +2,11 @@ const fs = require('fs')
 const path = require('path')
 const LRU = require('lru-cache')
 const express = require('express')
+const cookieParser = require('cookie-parser')
 const favicon = require('serve-favicon')
 const compression = require('compression')
 const resolve = file => path.resolve(__dirname, file)
-const { createBundleRenderer } = require('vue-server-renderer')
+const {createBundleRenderer} = require('vue-server-renderer')
 const redirects = require('./src/router/301.json')
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -18,7 +19,7 @@ const app = express()
 
 const template = fs.readFileSync(resolve('./src/index.html'), 'utf-8')
 
-function createRenderer (bundle, options) {
+function createRenderer(bundle, options) {
   // https://github.com/vuejs/vue/blob/dev/packages/vue-server-renderer/README.md#why-use-bundlerenderer
   return createBundleRenderer(bundle, Object.assign(options, {
     template,
@@ -59,17 +60,22 @@ const serve = (path, cache) => express.static(resolve(path), {
   maxAge: cache && isProd ? 60 * 60 * 24 * 30 : 0
 })
 
-app.use(compression({ threshold: 0 }))
+app.use(cookieParser())
+app.use(compression({threshold: 0}))
 app.use(favicon('./static/favicon.ico'))
 app.use('/static', serve('./static', true))
 app.use('/public', serve('./public', true))
 app.use('/static/robots.txt', serve('./robots.txt'))
-
 app.get('/sitemap.xml', (req, res) => {
   res.setHeader("Content-Type", "text/xml")
   res.sendFile(resolve('./static/sitemap.xml'))
 })
-
+// app.use(function (req, res, next) {
+//   res.cookie('server', 'done', {maxAge: 900000});
+//   res.cookie('__demoapp', req.cookies['__demoapp']);
+//   console.log('Cookies: ', req.cookies['__demoapp'])
+//   next()
+// })
 // 301 redirect for changed routes
 Object.keys(redirects).forEach(k => {
   app.get(k, (req, res) => res.redirect(301, redirects[k]))
@@ -88,7 +94,7 @@ const microCache = LRU({
 // headers.
 const isCacheable = req => useMicroCache
 
-function render (req, res) {
+function render(req, res) {
   const s = Date.now()
 
   res.setHeader("Content-Type", "text/html")
@@ -116,10 +122,7 @@ function render (req, res) {
     }
   }
 
-  const context = {
-    title: 'Vuetify', // default title
-    url: req.url
-  }
+  const context = {url: req.url, req, res}
   renderer.renderToString(context, (err, html) => {
     if (err) {
       return handleError(err)

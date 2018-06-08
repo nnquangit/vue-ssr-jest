@@ -6,7 +6,7 @@ export const actionsConst = {
 const state = {isLoggedIn: false, user: {}}
 
 const actions = {
-  signin: ({commit, state}, user) => commit(actionsConst.SIGNIN, user),
+  signin: ({commit, state, rootState: {api}}, user) => commit(actionsConst.SIGNIN, user),
   signout: ({commit, state}) => commit(actionsConst.SIGNOUT)
 }
 

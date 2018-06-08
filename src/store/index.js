@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
-import * as Cookies from 'js-cookie'
 import auth from './auth'
 import users from './users'
 
@@ -18,19 +17,18 @@ const restoreState = (store) => {
   }
 }
 
-const persistedState = createPersistedState({
-  key: '__demoapp',
-  paths: ['auth'],
-  storage: {
-    getItem: key => Cookies.get(key),
-    setItem: (key, value) => Cookies.set(key, value, {expires: 3}),
-    removeItem: key => Cookies.remove(key)
-  }
-})
-
-export function createStore() {
+export function createStore(storage) {
   return new Vuex.Store({
     modules: {auth, users},
-    plugins: [restoreState, persistedState]
+    plugins: [
+      restoreState,
+      createPersistedState({
+        key: '__demoapp',
+        paths: ['auth'],
+        filter: (mutations) => true,
+        storage: storage
+      }),
+      // (store) => store.replaceState({...store.state, ...services})
+    ]
   })
 }
