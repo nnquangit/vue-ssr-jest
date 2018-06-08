@@ -132,7 +132,7 @@ function render(req, res) {
       microCache.set(req.url, html)
     }
     if (!isProd) {
-      console.log(`whole request: ${Date.now() - s}ms`)
+      console.log(`Request: ${Date.now() - s}ms`)
     }
   })
 }

@@ -22,7 +22,7 @@ export default context => {
           return c.asyncData({$store: store, $route: router.currentRoute, $router: router})
         }
       })).then(() => {
-        isDev && console.log(`data pre-fetch: ${Date.now() - s}ms`)
+        isDev && console.log(`asyncData: ${Date.now() - s}ms`)
         context.state = store.state
         resolve(app)
       }).catch(reject)
