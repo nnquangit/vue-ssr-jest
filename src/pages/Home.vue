@@ -8,8 +8,8 @@
     </b-container>
 </template>
 <script>
-  export default {
-    beforeCreate() {
-    },
-  }
+    export default {
+        beforeCreate() {
+        }
+    }
 </script>

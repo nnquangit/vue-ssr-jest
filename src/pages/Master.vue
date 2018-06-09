@@ -2,11 +2,11 @@
     <div id="app">
         <app-navbar/>
         <router-view></router-view>
-        <app-modal-login />
+        <app-modal-login/>
     </div>
 </template>
 <script>
-  export default {
-    data: () => ({})
-  }
+    export default {
+        data: () => ({})
+    }
 </script>

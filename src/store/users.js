@@ -1,39 +1,39 @@
 export const actionsConst = {
-  list: {
-    FETCH: 'USERS_LIST_FETCH',
-    FETCH_SUCCESS: 'USERS_LIST_FETCH_SUCCESS',
-    FETCH_FAIL: 'USERS_LIST_FETCH_FAIL'
-  },
+    list: {
+        FETCH: 'USERS_LIST_FETCH',
+        FETCH_SUCCESS: 'USERS_LIST_FETCH_SUCCESS',
+        FETCH_FAIL: 'USERS_LIST_FETCH_FAIL'
+    }
 }
 
 const state = {
-  list: {fetch: false, results: [], info: {}}
+    list: {fetch: false, results: [], info: {}}
 }
 
 const actions = {
-  getUsers({commit, state, rootState: {api}}, page = 1) {
-    commit(actionsConst.list.FETCH)
-    return api.get('https://randomuser.me/api/?results=10&nat=us&page=' + page)
-      .then(res => {
-        commit(actionsConst.list.FETCH_SUCCESS, res)
-        return res
-      })
-      .catch(res => {
-        commit(actionsConst.list.FETCH_FAIL, res)
-        return res
-      })
-  },
+    getUsers({commit, state, rootState: {api}}, page = 1) {
+        commit(actionsConst.list.FETCH)
+        return api.get('https://randomuser.me/api/?results=10&nat=us&page=' + page)
+            .then(res => {
+                commit(actionsConst.list.FETCH_SUCCESS, res)
+                return res
+            })
+            .catch(res => {
+                commit(actionsConst.list.FETCH_FAIL, res)
+                return res
+            })
+    }
 }
 
 const mutations = {
-  [actionsConst.list.FETCH]: (state) => state.list.fetch = true,
-  [actionsConst.list.FETCH_SUCCESS]: (state, res) => state.list = {fetch: false, ...res.data},
-  [actionsConst.list.FETCH_FAIL]: (state) => state.list.fetch = false,
+    [actionsConst.list.FETCH]: (state) => state.list.fetch = true,
+    [actionsConst.list.FETCH_SUCCESS]: (state, res) => state.list = {fetch: false, ...res.data},
+    [actionsConst.list.FETCH_FAIL]: (state) => state.list.fetch = false
 }
 
 const getters = {
-  usersList: (state) => state.list.results,
-  usersListInfo: (state) => state.list.info,
+    usersList: (state) => state.list.results,
+    usersListInfo: (state) => state.list.info
 }
 
 export default {state, actions, mutations, getters}

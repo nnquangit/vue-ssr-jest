@@ -5,28 +5,20 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const favicon = require('serve-favicon')
 const compression = require('compression')
-const resolve = file => path.resolve(__dirname, file)
 const {createBundleRenderer} = require('vue-server-renderer')
-const redirects = require('./src/router/301.json')
 
+const resolve = file => path.resolve(__dirname, file)
+const redirects = require('./src/router/301.json')
 const isProd = process.env.NODE_ENV === 'production'
 const useMicroCache = process.env.MICRO_CACHE !== 'false'
-const serverInfo =
-    `express/${require('express/package.json').version} ` +
-    `vue-server-renderer/${require('vue-server-renderer/package.json').version}`
-
 const app = express()
-
 const template = fs.readFileSync(resolve('./src/index.html'), 'utf-8')
-
-function createRenderer(bundle, options) {
-    return createBundleRenderer(bundle, Object.assign(options, {
-        template,
-        cache: LRU({max: 1000, maxAge: 1000 * 60 * 15}),
-        basedir: resolve('./public'),
-        runInNewContext: true
-    }))
-}
+const createRenderer = (bundle, options) => createBundleRenderer(bundle, Object.assign(options, {
+    template,
+    cache: LRU({max: 1000, maxAge: 1000 * 60 * 15}),
+    basedir: resolve('./public'),
+    runInNewContext: true
+}))
 
 let renderer
 let readyPromise
@@ -47,13 +39,8 @@ const serve = (path, cache) => express.static(resolve(path), {
 app.use(cookieParser())
 app.use(compression({threshold: 0}))
 app.use(favicon('./static/favicon.ico'))
-app.use('/static', serve('./static', true))
-app.use('/public', serve('./public', true))
-app.use('/static/robots.txt', serve('./robots.txt'))
-app.get('/sitemap.xml', (req, res) => {
-    res.setHeader("Content-Type", "text/xml")
-    res.sendFile(resolve('./static/sitemap.xml'))
-})
+app.use('/', serve('./static', true))
+app.use('/', serve('./public', true))
 
 // 301 redirect for changed routes
 Object.keys(redirects).forEach(k => {
@@ -67,7 +54,6 @@ function render(req, res) {
     const s = Date.now()
 
     res.setHeader("Content-Type", "text/html")
-    res.setHeader("Server", serverInfo)
 
     const handleError = err => {
         if (err && err.code === 404) {

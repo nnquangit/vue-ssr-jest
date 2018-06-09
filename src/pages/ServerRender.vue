@@ -17,37 +17,37 @@
     </b-container>
 </template>
 <script>
-  import {mapActions, mapGetters} from 'vuex'
+    import {mapActions, mapGetters} from 'vuex'
 
-  let asyncData = ({$store, $route}) => {
-    return Promise.all([$store.dispatch('getUsers', Math.max(parseInt($route.query.page), 1))])
-  }
-
-
-  export default {
-    asyncData,
-    data: () => ({}),
-    mounted() {
-      if (!this.usersList.length) {
-        asyncData(this)
-      }
-    },
-    watch: {
-      $route() {
-        asyncData(this)
-      }
-    },
-    computed: {
-      ...mapGetters(['usersList', 'usersListInfo']),
-      fetch() {
-        return this.$store.state.users.list.fetch;
-      }
-    },
-    methods: {
-      ...mapActions(['getUsers']),
-      onChange(page) {
-        this.$router.push({path: this.$route.fullPath, query: {page}})
-      }
+    let asyncData = ({$store, $route}) => {
+        let page = Math.max(parseInt($route.query.page), 1)
+        return Promise.all([$store.dispatch('getUsers', page)])
     }
-  }
+
+    export default {
+        asyncData,
+        data: () => ({}),
+        mounted() {
+            if (!this.usersList.length) {
+                asyncData(this)
+            }
+        },
+        watch: {
+            $route() {
+                asyncData(this)
+            }
+        },
+        computed: {
+            ...mapGetters(['usersList', 'usersListInfo']),
+            fetch() {
+                return this.$store.state.users.list.fetch
+            }
+        },
+        methods: {
+            ...mapActions(['getUsers']),
+            onChange(page) {
+                this.$router.push({path: this.$route.fullPath, query: {page}})
+            }
+        }
+    }
 </script>

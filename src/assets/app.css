@@ -5,6 +5,7 @@
     width: 100%;
     height: 100%;
 }
+
 .loader-overlay {
     position: absolute;
     top: 0;
@@ -14,6 +15,7 @@
     opacity: .5;
     background: #fff;
 }
+
 .loader {
     position: absolute;
     top: 50%;
@@ -27,6 +29,7 @@
     height: 60px;
     animation: spin 1.5s linear infinite;
 }
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);

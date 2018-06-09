@@ -8,9 +8,9 @@
     </b-container>
 </template>
 <script>
-  import {AuthMix} from '../mixins'
+    import {AuthMix} from '../mixins'
 
-  export default {
-    mixins: [AuthMix]
-  }
+    export default {
+        mixins: [AuthMix]
+    }
 </script>

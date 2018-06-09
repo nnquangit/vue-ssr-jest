@@ -1,27 +1,26 @@
 const path = require('path')
 const webpack = require('webpack')
-const vueConfig = require('./vue-loader.config')
 const {VueLoaderPlugin} = require('vue-loader')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production'
 const resolve = (file) => path.resolve(__dirname, file)
 
 const config = {
-    devtool: isProd ? false : '#cheap-module-eval-source-map',
     mode: isProd ? 'production' : 'development',
+    devtool: isProd ? false : '#cheap-module-eval-source-map',
     performance: {
+        hints: isProd ? 'warning' : false,
         maxEntrypointSize: 1024 * 1024,
         maxAssetSize: 500 * 1024,
-        hints: isProd ? 'warning' : false
     },
     optimization: {
         minimizer: [
             new UglifyJSPlugin({uglifyOptions: {warnings: false, compress: true, output: {comments: false}}})
         ],
-        noEmitOnErrors: true,
     },
     output: {
         path: resolve('../public'),
@@ -36,14 +35,17 @@ const config = {
         }
     },
     module: {
-        noParse: /es6-promise\.js$/, // avoid webpack shimming process
         rules: [
+            {
+                enforce: "pre",
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "eslint-loader",
+            },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                options: {
-                    hotReload: true
-                }
+                options: {hotReload: true}
             },
             {
                 test: /\.js$/,
@@ -52,11 +54,38 @@ const config = {
             },
             {
                 test: /\.css$/,
-                loader: ['vue-style-loader', 'css-loader'],//MiniCssExtractPlugin.loader
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {importLoaders: 1, minimize: {discardComments: {removeAll: true}}}
+                    },
+                    'postcss-loader',
+                ],
+            },
+            {
+                test: /\.(sass|scss)$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {minimize: {discardComments: {removeAll: true}}}
+                    },
+                    'postcss-loader',
+                    'sass-loader'
+                ],
             },
             {
                 test: /\.styl$/,
-                loader: ['vue-style-loader', 'css-loader', 'stylus-loader']
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {minimize: {discardComments: {removeAll: true}}}
+                    },
+                    'postcss-loader',
+                    'stylus-loader',
+                ]
             },
             {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
@@ -77,12 +106,22 @@ const config = {
             jQuery: "jquery",
             "window.jQuery": "jquery"
         }),
-        // new MiniCssExtractPlugin({
-        //   filename: "[name].[hash].css",
-        //   chunkFilename: "[id].[hash].css"
-        // }),
-        new VueLoaderPlugin(),
+        new MiniCssExtractPlugin({
+            filename: "[name].[hash].css",
+            chunkFilename: "[name].[hash].css"
+        }),
+        new VueLoaderPlugin()
     ]
+}
+
+if (isProd) {
+    config.plugins.push(new CompressionPlugin({
+        asset: "[path].gz[query]",
+        algorithm: "gzip",
+        test: /\.js$|\.css$|\.html$/,
+        threshold: 10240,
+        minRatio: 0.8
+    }))
 }
 
 module.exports = config

@@ -20,15 +20,15 @@
     </b-navbar>
 </template>
 <script>
-  import {mapActions, mapGetters} from 'vuex'
+    import {mapActions, mapGetters} from 'vuex'
 
-  export default {
-    data: () => ({}),
-    computed: {
-      ...mapGetters(['currentUser', 'isLoggedIn'])
-    },
-    methods: {
-      ...mapActions(['signout']),
+    export default {
+        data: () => ({}),
+        computed: {
+            ...mapGetters(['currentUser', 'isLoggedIn'])
+        },
+        methods: {
+            ...mapActions(['signout'])
+        }
     }
-  }
 </script>

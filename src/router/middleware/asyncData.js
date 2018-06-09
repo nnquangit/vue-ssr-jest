@@ -1,22 +1,22 @@
 export default ({app, router, store}) => (to, from, next) => {
-  const s = Date.now()
-  const matched = router.getMatchedComponents(to)
+    const s = Date.now()
+    const matched = router.getMatchedComponents(to)
 
-  if (!matched.length) {
-    return next()
-  }
-  store.dispatch('setAppRouting', true)
-
-  Promise.all(matched.map(c => {
-    if (c.asyncData) {
-      return c.asyncData({$store: store, $route: to, $router: router})
+    if (!matched.length) {
+        return next()
     }
-  })).then(() => {
-    store.dispatch('setAppRouting', false)
-    console.log(`data pre-fetch: ${Date.now() - s}ms`)
-  }).catch(() => {
-    console.log(`data error pre-fetch: ${Date.now() - s}ms`)
-  })
+    store.dispatch('setAppRouting', true)
 
-  return next()
+    Promise.all(matched.map(c => {
+        if (c.asyncData) {
+            return c.asyncData({$store: store, $route: to, $router: router})
+        }
+    })).then(() => {
+        store.dispatch('setAppRouting', false)
+        console.log(`data pre-fetch: ${Date.now() - s}ms`)
+    }).catch(() => {
+        console.log(`data error pre-fetch: ${Date.now() - s}ms`)
+    })
+
+    return next()
 }

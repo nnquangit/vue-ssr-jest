@@ -8,16 +8,16 @@ import ServerRender from '../pages/ServerRender.vue'
 Vue.use(Router)
 
 export function createRouter() {
-  const router = new Router({
-    base: __dirname,
-    mode: 'history',
-    scrollBehavior: () => ({y: 0}),
-    routes: [
-      {path: '/', component: Home},
-      {path: '/protected', component: Protected},
-      {path: '/serverrender', component: ServerRender},
-    ]
-  })
+    const router = new Router({
+        base: __dirname,
+        mode: 'history',
+        scrollBehavior: () => ({y: 0}),
+        routes: [
+            {path: '/', component: Home},
+            {path: '/protected', component: Protected},
+            {path: '/serverrender', component: ServerRender}
+        ]
+    })
 
-  return router
+    return router
 }

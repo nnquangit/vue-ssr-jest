@@ -1,13 +1,21 @@
 {
   "presets": [
-    ["@babel/preset-env",  {"modules": false}]
+    [
+      "env",
+      {
+        "modules": "commonjs"
+      }
+    ],
+    "stage-2"
   ],
-//  "plugins": ["@babel/plugin-transform-runtime"],
   "env": {
     "test": {
       "presets": [
-        ["env", { "targets": { "node": "current" }}]
+        "env",
+        "stage-2"
       ]
     }
-  }
+  },
+  "comments": false,
+  "compact": false
 }
