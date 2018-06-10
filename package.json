@@ -6,7 +6,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node server",
     "dev": "node server",
-    "test": "jest",
+    "unit": "jest",
     "lint": "eslint --ext .js,.vue src test/unit/specs",
     "build": "rimraf public && npm run build:client && npm run build:server",
     "build:client": "cross-env NODE_ENV=production webpack --config build/webpack.client.config.js --progress --hide-modules",
