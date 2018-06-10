@@ -17,7 +17,7 @@ npm run dev
 npm run build
 
 # run unit tests
-npm run unit
+npm run test
 
 # run production
 npm start
