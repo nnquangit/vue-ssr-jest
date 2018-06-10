@@ -2,7 +2,7 @@
   "name": "vue-ssr-jest",
   "version": "1.0.0",
   "description": "Vue.js start kit project integrating `vue-server-renderer`, `vuex`, `vue-router`, `vue-bootstrap`,`webpack 4`,`jest`,...",
-  "main": "serve.js",
+  "main": "server.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node server",
     "dev": "node server",
@@ -35,13 +35,13 @@
     "vuex-persistedstate": "^2.5.4",
     "vuex-router-sync": "^5.0.0",
     "bootstrap-vue": "^2.0.0-rc.11",
+    "@vue/test-utils": "^1.0.0-beta.18",
     "compression": "^1.7.2",
     "cookie-parser": "^1.4.3",
     "cross-env": "^5.1.6",
     "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
-    "@vue/test-utils": "^1.0.0-beta.18",
     "autoprefixer": "^8.6.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.3",
