@@ -85,6 +85,7 @@
     "postcss-loader": "^2.1.5"
   },
   "jest": {
+    "verbose": true,
     "moduleFileExtensions": [
       "js",
       "vue"

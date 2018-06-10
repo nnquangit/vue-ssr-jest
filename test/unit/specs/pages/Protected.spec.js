@@ -7,11 +7,12 @@ import {createStore} from '@/store'
 import {createRouter} from '@/router'
 import {createStoreStorage} from '@/services/storestorage'
 import {createApi} from '@/services/api'
-import ServerRender from '@/pages/ServerRender.vue'
+import Protected from '@/pages/Protected.vue'
 
 
-describe('Pages:ServerRender', () => {
+describe('Pages:Protected', () => {
     let Comp
+
     beforeEach(() => {
         const api = createApi()
         const router = createRouter()
@@ -19,19 +20,11 @@ describe('Pages:ServerRender', () => {
 
         sync(store, router)
         store.replaceState({...store.state, api})
-
-        return Promise.all([store.dispatch('getUsers', 1)]).then(res => {
-            Comp = shallowMount(ServerRender, {
-                store,
-                mocks: {
-                    $router: router,
-                    $route: {path: '/testssr', query: {}}
-                }
-            })
-        })
+        store.dispatch('signin', {fullname: 'Quang Ngô', token: '123456'})
+        Comp = shallowMount(Protected, {store})
     })
 
-    it('Check user list', () => {
-        expect(Comp.vm.usersList.length).toBeGreaterThanOrEqual(1)
+    it('Check protected page html', () => {
+        expect(Comp.vm.$el.innerHTML).toEqual(expect.stringContaining('Quang Ngô'))
     })
 })

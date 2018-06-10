@@ -30,7 +30,7 @@ const config = {
     resolve: {
         extensions: ['*', '.js', '.json', '.vue'],
         alias: {
-            '@': resolve('src'),
+            '@': resolve('../src'),
             'vue$': 'vue/dist/vue.common.js'
         }
     },

@@ -9,7 +9,7 @@ import {createStoreStorage} from '@/services/storestorage'
 import Navbar from '@/components/Layout/Navbar.vue'
 
 
-describe('Navbar', () => {
+describe('Components:Navbar', () => {
     let Comp
 
     beforeEach(() => {

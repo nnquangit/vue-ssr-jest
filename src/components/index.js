@@ -3,6 +3,7 @@ import AppNoSSR from './Layout/NoSSR'
 import AppLoader from './Layout/Loader.vue'
 import AppNavbar from './Layout/Navbar.vue'
 import ModalLogin from './Layout/Modal/Login.vue'
+import UserInfo from './UserInfo.vue'
 
 Vue.use({
     install(Vue) {
@@ -10,5 +11,6 @@ Vue.use({
         Vue.component('app-modal-login', ModalLogin)
         Vue.component('app-loader', AppLoader)
         Vue.component('app-nossr', AppNoSSR)
+        Vue.component('app-user-info', UserInfo)
     }
 })

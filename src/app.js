@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Master from './pages/Master.vue'
+import Router from 'vue-router'
 import {sync} from 'vuex-router-sync'
 // Plugins
 import './components'
@@ -10,7 +10,8 @@ import {createStore} from './store'
 import {createRouter} from './router'
 import {createStoreStorage} from './services/storestorage'
 import {createApi} from './services/api'
-import Router from 'vue-router'
+// Master page
+import Master from './pages/Master.vue'
 
 Vue.use(Router)
 
