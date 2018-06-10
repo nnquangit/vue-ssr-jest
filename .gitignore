@@ -1,6 +1,7 @@
 /.idea/
 /dist/
 /public/
+/test/unit/coverage/
 /node_modules/
 /npm-debug.log
 /.env.js
