@@ -10,6 +10,9 @@ import {createStore} from './store'
 import {createRouter} from './router'
 import {createStoreStorage} from './services/storestorage'
 import {createApi} from './services/api'
+import Router from 'vue-router'
+
+Vue.use(Router)
 
 export function createApp(ssrContext) {
     const api = createApi()

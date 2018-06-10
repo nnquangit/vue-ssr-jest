@@ -91,7 +91,7 @@
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1",
-      ".(css|scss|less)$": "<rootDir>/test/unit/__mocks__/styleMock.js"
+      ".(css|scss|less)$": "<rootDir>/test/unit/__mocks__/noneMock.js"
     },
     "transform": {
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest",

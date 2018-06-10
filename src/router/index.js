@@ -5,7 +5,7 @@ import Home from '../pages/Home.vue'
 import Protected from '../pages/Protected.vue'
 import ServerRender from '../pages/ServerRender.vue'
 
-Vue.use(Router)
+// Vue.use(Router)
 
 export function createRouter() {
     const router = new Router({
