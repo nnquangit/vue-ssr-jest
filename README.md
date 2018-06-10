@@ -3,6 +3,7 @@
 Simple Vue.js start kit project integrating `vue-server-renderer`, `vuex`, `vue-router`, `vue-bootstrap`,... and `webpack 4`
 
 [![Build Status](https://travis-ci.org/nnquangit/vue-ssr-jest.svg?branch=master)](https://travis-ci.org/nnquangit/vue-ssr-jest)
+[![CircleCI](https://circleci.com/gh/nnquangit/vue-ssr-jest/tree/master.svg?style=svg)](https://circleci.com/gh/nnquangit/vue-ssr-jest/tree/master)
 
 ## Build Setup
 
