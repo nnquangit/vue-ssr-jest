@@ -19,7 +19,14 @@ const config = {
     },
     optimization: {
         minimizer: [
-            new UglifyJSPlugin({uglifyOptions: {warnings: false, compress: true, output: {comments: false}}})
+            new UglifyJSPlugin({
+                uglifyOptions: {
+                    warnings: false, compress: true,
+                    output: {comments: false},
+                    cache: true,
+                    parallel: true
+                }
+            })
         ],
     },
     output: {
@@ -49,7 +56,7 @@ const config = {
             },
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
+                loader: 'babel-loader?cacheDirectory',
                 exclude: /node_modules/
             },
             {
