@@ -27,7 +27,7 @@ const actions = {
 
 const mutations = {
     [actionsConst.list.FETCH]: (state) => state.list.fetch = true,
-    [actionsConst.list.FETCH_SUCCESS]: (state, res) => state.list = {fetch: false, ...res.data},
+    [actionsConst.list.FETCH_SUCCESS]: (state, res) => state.list = {...res.data, fetch: false},
     [actionsConst.list.FETCH_FAIL]: (state) => state.list.fetch = false
 }
 

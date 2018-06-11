@@ -6,7 +6,7 @@
                 v-model="usersListInfo.page"
                 :total-rows="100" :per-page="10"
                 @change="onChange"></b-pagination>
-        <app-user-info v-for="(e,i) in usersList" :key="i" v-bind="e"/>
+        <app-user-info v-for="(e,i) in list" :key="i" v-bind="e"/>
         <div class="text-center my-3">Current Page: {{usersListInfo.page}}</div>
     </b-container>
 </template>
@@ -21,11 +21,6 @@
     export default {
         asyncData,
         data: () => ({}),
-        mounted() {
-            if (!this.usersList.length) {
-                asyncData(this)
-            }
-        },
         watch: {
             $route() {
                 asyncData(this)
@@ -33,6 +28,9 @@
         },
         computed: {
             ...mapGetters(['usersList', 'usersListInfo']),
+            list() {
+                return this.$store.state.users.list.results
+            },
             fetch() {
                 return this.$store.state.users.list.fetch
             }
