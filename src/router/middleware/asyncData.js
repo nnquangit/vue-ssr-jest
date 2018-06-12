@@ -5,7 +5,6 @@ export default ({app, router, store}) => (to, from, next) => {
     if (!matched.length) {
         return next()
     }
-    // store.dispatch('setAppRouting', true)
 
     Promise.all(matched.map(c => {
         if (c.asyncData) {
@@ -13,9 +12,6 @@ export default ({app, router, store}) => (to, from, next) => {
         }
     })).then(() => {
         console.log(`data pre-fetch: ${Date.now() - s}ms`)
-    }).catch(() => {
-        console.log(`data error pre-fetch: ${Date.now() - s}ms`)
-    })
-
-    return next()
+        next()
+    }).catch(next)
 }

@@ -8,16 +8,7 @@ process.traceDeprecation = true
 
 module.exports = function setupDevServer(app, cb) {
     let bundle, clientManifest
-    let resolve
-    const readyPromise = new Promise(r => {
-        resolve = r
-    })
-    const ready = (...args) => {
-        cb(...args)
-        resolve()
-    }
     const readFile = (output, file) => output.readFileSync(path.join(clientConfig.output.path, file), 'utf-8')
-
 
     // Config client for webpack-hot-middleware
     // https://github.com/webpack-contrib/webpack-hot-middleware
@@ -29,9 +20,35 @@ module.exports = function setupDevServer(app, cb) {
     )
 
     //clientCompiler
+    let clientResolver
+    const clientPromise = new Promise((resolve, reject) => clientResolver = resolve)
     const client = webpack(clientConfig)
+    client.hooks.done.tap("Webpack client", function (compilation, callback) {
+        clientManifest = JSON.parse(readFile(client.outputFileSystem, 'vue-ssr-client-manifest.json'))
+        if (bundle) {
+            cb(bundle, {clientManifest})
+        }
+        clientResolver()
+    })
+
+    //serverCompiler
+    let serverResolver
+    const serverPromise = new Promise((resolve, reject) => serverResolver = resolve)
+    const server = webpack(serverConfig)
+    server.outputFileSystem = new MFS()
+    server.hooks.done.tap("Webpack server", function (compilation, callback) {
+        bundle = JSON.parse(readFile(server.outputFileSystem, 'vue-ssr-server-bundle.json'))
+        if (clientManifest) {
+            cb(bundle, {clientManifest})
+        }
+        serverResolver()
+    });
+    server.watch({}, (err, stats) => console.log("Webpack server watching..."))
+
+    //devMiddleware
     const devMiddleware = require('webpack-dev-middleware')(client, {
         publicPath: clientConfig.output.publicPath,
+        // stats: false,
         stats: {
             colors: true,
             modules: false,
@@ -44,23 +61,7 @@ module.exports = function setupDevServer(app, cb) {
         }
     })
     app.use(devMiddleware)
-    client.plugin('done', () => {
-        clientManifest = JSON.parse(readFile(client.outputFileSystem, 'vue-ssr-client-manifest.json'))
-        if (bundle) {
-            ready(bundle, {clientManifest})
-        }
-    })
     app.use(require('webpack-hot-middleware')(client))
 
-    //serverCompiler
-    const server = webpack(serverConfig)
-    server.outputFileSystem = new MFS()
-    server.watch({}, (err, stats) => {
-        bundle = JSON.parse(readFile(server.outputFileSystem, 'vue-ssr-server-bundle.json'))
-        if (clientManifest) {
-            ready(bundle, {clientManifest})
-        }
-    })
-
-    return readyPromise
+    return Promise.all([clientPromise, serverPromise])
 }
