@@ -4,6 +4,7 @@ import {sync} from 'vuex-router-sync'
 // Plugins
 import './components'
 import './plugins/bootstrap'
+import {connectVue, createStore as newStore} from './plugins/exstore'
 import './assets/app.css'
 // Service
 import {createStore} from './store'
@@ -13,7 +14,32 @@ import {createApi} from './services/api'
 // Master page
 import Master from './pages/Master.vue'
 
+
+const modules = {
+    counter: {
+        state: {current: 20},
+        actions: {
+            increase: ({state, commit}) => {
+                console.log('increase')
+                commit('COUNTER_INCREASE')
+            },
+            decrease: ({state, commit}) => commit('COUNTER_DECREASE')
+        },
+        mutations: {
+            'COUNTER_INCREASE': (state) => state.current += 1,
+            'COUNTER_DECREASE': (state) => state.current -= 1,
+        },
+        getters: {
+            current: function(state) {
+                return state.current
+            } ,
+        },
+    }
+};
+newStore({modules})
+
 Vue.use(Router)
+Vue.use(connectVue)
 
 export function createApp(ssrContext) {
     const api = createApi()

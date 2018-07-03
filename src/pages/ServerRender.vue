@@ -20,7 +20,7 @@
 
     export default {
         asyncData,
-        data: () => ({}),
+        data: () => ({test: 1}),
         computed: {
             ...mapGetters(['usersList', 'usersListInfo']),
             fetch() {

@@ -32,6 +32,7 @@ const mutations = {
 }
 
 const getters = {
+    noneUser: (state) => 1,
     usersList: (state) => state.list.results,
     usersListInfo: (state) => state.list.info
 }
