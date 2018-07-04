@@ -10,8 +10,5 @@ export default ({app, router, store}) => (to, from, next) => {
         if (c.asyncData) {
             return c.asyncData({$store: store, $route: to, $router: router})
         }
-    })).then(() => {
-        console.log(`data pre-fetch: ${Date.now() - s}ms`)
-        next()
-    }).catch(next)
+    })).then(next).catch(next)
 }

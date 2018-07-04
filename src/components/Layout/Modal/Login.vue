@@ -11,7 +11,7 @@
     </b-modal>
 </template>
 <script>
-    import {mapActions} from 'vuex'
+    import {vueActions} from '../../../plugins/exstore'
 
     export default {
         data: () => ({
@@ -28,7 +28,7 @@
             })
         },
         methods: {
-            ...mapActions(['signin']),
+            ...vueActions(['signin']),
             onSubmit(evt) {
                 evt.preventDefault()
                 this.$refs.modalRef.hide()

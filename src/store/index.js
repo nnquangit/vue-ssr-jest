@@ -1,33 +1,40 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
-import createPersistedState from 'vuex-persistedstate'
+import {connectVue, createStore as newStore} from '../plugins/exstore'
 import auth from './auth'
 import users from './users'
 
-Vue.use(Vuex)
-
-const restoreState = (store) => {
-    if (process.browser) {
-        if (store) {
-            if (window.__INITIAL_STATE__) {
-                store.replaceState(window.__INITIAL_STATE__)
-                delete window.__INITIAL_STATE__
-            }
-        }
-    }
-}
+Vue.use(connectVue)
 
 export function createStore(storage) {
-    return new Vuex.Store({
-        modules: {auth, users},
-        plugins: [
-            restoreState,
-            createPersistedState({
-                key: '__demoapp',
-                paths: ['auth'],
-                filter: () => true,
-                storage: storage
-            })
-        ]
-    })
+    return newStore({
+        modules: {
+            auth,
+            users,
+            counter: {
+                state: {current: 1},
+                actions: {
+                    increase: ({state, commit}) => commit('COUNTER_INCREASE'),
+                    decrease: ({state, commit}) => commit('COUNTER_DECREASE')
+                },
+                mutations: {
+                    'COUNTER_INCREASE': (state) => state.current += 1,
+                    'COUNTER_DECREASE': (state) => state.current -= 1
+                },
+                getters: {
+                    current: (state) => state.current
+                }
+            }
+        }
+    }).attachPlugins([
+        (store) => {
+            if (process.browser) {
+                if (store) {
+                    if (window.__INITIAL_STATE__) {
+                        store.replaceState(window.__INITIAL_STATE__)
+                        delete window.__INITIAL_STATE__
+                    }
+                }
+            }
+        }
+    ])
 }

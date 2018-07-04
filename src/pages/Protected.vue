@@ -9,12 +9,10 @@
 </template>
 <script>
     import {AuthMix} from '../mixins'
-    import {mapGetters} from 'vuex'
+    import {vueActions, vueGetters} from '../plugins/exstore'
 
     export default {
         mixins: [AuthMix],
-        computed: {
-            ...mapGetters(['currentUser', 'isLoggedIn'])
-        }
+        computed: {...vueGetters(['currentUser', 'isLoggedIn'])}
     }
 </script>

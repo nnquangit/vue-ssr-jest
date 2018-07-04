@@ -1,5 +1,4 @@
 import * as Rx from 'rxjs'
-import Vue from 'vue'
 
 const store = new Rx.Subject()
 Object.assign(store, {
@@ -65,8 +64,6 @@ export function createStore({modules, services, plugins, middlewares}) {
     if (middlewares) {
         _store.attachMiddlewares(middlewares)
     }
-
-    console.log('createStorecreateStore')
 
     return _store
 }
@@ -195,53 +192,47 @@ export function attachMiddlewares(middlewares) {
 // }
 // keys.reduce((a, c) => ({ ...a, [c]: store.getters[c] }), {});
 
-const getSubset = (keys, obj) => keys.reduce((a, c) => ({...a, [c]: obj[c]}), {});
+const extractActions = (keys, obj) => keys.reduce((a, c) => ({...a, [c]: obj[c]}), {})
+const extractGettters = (keys, obj) => keys.reduce((a, c) => ({...a, [c]: obj[c](store)}), {})
 
-export const vueActions = (keys) => {
-    return {
-        _fromStore: function () {
-            return function (store) {
-                return getSubset(keys, store.actions)
-            }
-        },
-    }
-}
-
-const getSubsetG = (keys, obj) => keys.reduce((a, c) => ({...a, [c]: obj[c]()}), {});
-
-export const vueGetters = (keys) => {
-    return {
-        _fromStore: function () {
-            return function (store) {
-                return getSubsetG(keys, store.getters)
-            }
-        },
-    }
-}
+// ({fromStore: () => keys})
+export const vueActions = (keys) => ({fromStore: () => keys})
+export const vueGetters = (keys) => keys.reduce(
+    (a, c) => ({
+        ...a, [c]: function () {
+            return this.storeData[c]
+        }
+    }),
+    {fromStore: {get: () => keys, set: () => true}}
+)
 
 export const connectVue = {
     install: function (Vue, options) {
         Vue.mixin({
             beforeCreate: function () {
                 let $options = this.$options
+                this.$store = store
 
-                if ($options.computed && !!$options.computed._fromStore) {
-                    let root = $options.data;
-                    $options.data = (ar) => {
-                        return {
-                            ...root(ar),
-                            ...$options.computed._fromStore()(store)
+                if ($options.computed && !!$options.computed.fromStore) {
+                    let keys = $options.computed.fromStore.get()
+                    let base = $options.data
+                    let storeData = extractGettters(keys, store.getters)
+                    let storeSnapShot = JSON.stringify(storeData)
+
+                    $options.data = (...ar) => ({...base(...ar), storeData})
+                    store.subscribe(() => {
+                        let newData = extractGettters(keys, store.getters)
+                        let newSnapShot = JSON.stringify(newData)
+
+                        if (storeSnapShot !== newSnapShot) {
+                            storeSnapShot = newSnapShot
+                            Object.assign(this, {storeData: newData})
                         }
-                    }
-                    Object.assign(this, $options.computed._fromStore()(store));
-
-                    store.subscribe(v => {
-                        Object.assign(this, $options.computed._fromStore()(store));
                     })
                 }
-
-                if ($options.actions && !!$options.actions._fromStore) {
-                    Object.assign(this, $options.actions._fromStore()(store));
+                if ($options.methods && !!$options.methods.fromStore) {
+                    let keys = $options.methods.fromStore()
+                    Object.assign(this, extractActions(keys, store.actions))
                 }
             }
         })
