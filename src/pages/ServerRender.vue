@@ -1,18 +1,14 @@
 <template>
     <b-container class="my-3">
-        <!--<button type="button" @click="increase">Tang</button>-->
-        <!--<app-loader v-if="storeData.usersList.fetch"/>-->
-        <b-pagination align="center" v-model="usersList.info.page" :total-rows="30" :per-page="10"
-                      @change="onPage"></b-pagination>
+        <app-loader :show="usersList.fetch"/>
+        <b-pagination v-model="usersList.info.page" :total-rows="30" :per-page="10" @change="onPage"></b-pagination>
         <app-user-info v-for="(e,i) in usersList.results" :key="i" v-bind="e"/>
-        <!--<div class="text-center my-3">Current Page: {{storeData.usersList.info.page}}</div>-->
-        <!--{{JSON.stringify(storeData)}}-->
     </b-container>
 </template>
 <script>
-    import {vueActions, vueGetters} from '../plugins/exstore'
+    import {vueActions, vueGetters} from 'exstore'
 
-    let asyncData = ({$store: {actions}, $route}) => {
+    let asyncData = ({store: {actions}, $route}) => {
         let page = Math.max(parseInt($route.query.page), 1)
         return Promise.all([actions.getUsers(page)])
     }
@@ -22,8 +18,9 @@
         data: () => ({}),
         mounted() {
             let page = Math.max(parseInt(this.$route.query.page), 1)
+            let usersList = this.usersList
 
-            if (!this.usersList.loaded) {
+            if (!usersList.loaded || (usersList.info.page !== page)) {
                 this.getUsers(page)
             }
         },

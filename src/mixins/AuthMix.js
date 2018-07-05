@@ -1,20 +1,21 @@
-let login = '/'
+let login = '/login'
 
 export const AuthMix = {
     beforeMount: function () {
-        console.log('AuthMix', this)
-        // if (!this.isLoggedIn) {
-        //     this.$router.push(login)
-        // }
+        if (!this._isLoggedIn) {
+            this.$router.push({path: login, query: {redirect: this.$route.fullPath}})
+        }
     },
     watch: {
-        // isLoggedIn(newval) {
-        //     if (!newval) {
-        //         this.$router.push(login)
-        //     }
-        // }
+        _isLoggedIn(newval) {
+            if (!newval) {
+                this.$router.push(login)
+            }
+        }
     },
     computed: {
-        // ...mapGetters(['isLoggedIn'])
+        _isLoggedIn: function () {
+            return this.$store.getters.isLoggedIn()
+        }
     }
 }

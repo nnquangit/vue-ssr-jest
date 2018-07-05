@@ -1,30 +1,21 @@
-import Vue from 'vue'
 import '@/components'
 import '@/plugins/bootstrap'
 import {shallowMount} from '@vue/test-utils'
-import {sync} from 'vuex-router-sync'
 import {createStore} from '@/store'
-import {createRouter} from '@/router'
-import {createStoreStorage} from '@/services/storestorage'
-import {createApi} from '@/services/api'
+import {createApi} from '@/store/services'
 import ServerRender from '@/pages/ServerRender.vue'
-
 
 describe('Pages:ServerRender', () => {
     let Comp
+
     beforeEach(() => {
-        const api = createApi()
-        const router = createRouter()
-        const store = createStore(createStoreStorage())
-
-        sync(store, router)
-        store.replaceState({...store.state, api})
-
-        return Promise.all([store.dispatch('getUsers', 1)]).then(res => {
+        const $api = createApi()
+        const store = createStore().attachServices({$api})
+        return Promise.all([store.actions.getUsers(1)]).then(res => {
             Comp = shallowMount(ServerRender, {
                 store,
                 mocks: {
-                    $router: router,
+                    // $router: router,
                     $route: {path: '/testssr', query: {}}
                 }
             })
@@ -32,6 +23,6 @@ describe('Pages:ServerRender', () => {
     })
 
     it('Check user list', () => {
-        expect(Comp.vm.usersList.length).toBeGreaterThanOrEqual(1)
+        expect(Comp.vm.usersList.results.length).toBeGreaterThanOrEqual(1)
     })
 })
