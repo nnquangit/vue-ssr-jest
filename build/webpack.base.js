@@ -1,15 +1,30 @@
-const path = require('path')
 const webpack = require('webpack')
+const path = require('path')
 const {VueLoaderPlugin} = require('vue-loader')
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-const CompressionPlugin = require('compression-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
+const {SSRClientPlugin} = require('ssr-plugin')
 
 const isProd = process.env.NODE_ENV === 'production'
 const resolve = (file) => path.resolve(__dirname, file)
+const postcssLoader = {
+    loader: 'postcss-loader',
+    options: {
+        plugins: [
+            require('autoprefixer')({
+                browsers: [
+                    'ie >= 10', 'ie_mob >= 10', 'ff >= 30',
+                    'chrome >= 21', 'safari >= 6', 'opera >= 23',
+                    'ios >= 7', 'android >= 4.4', 'bb >= 10', 'firefox 47'
+                ]
+            }),
+        ]
+    }
+}
 
-const config = {
+const config = (opt = {}) => ({
     mode: isProd ? 'production' : 'development',
     devtool: isProd ? false : '#cheap-module-eval-source-map',
     performance: {
@@ -18,6 +33,27 @@ const config = {
         maxAssetSize: 500 * 1024,
     },
     optimization: {
+        splitChunks: {
+            chunks: "async",
+            minSize: 1000,
+            minChunks: 1,
+            maxAsyncRequests: 5,
+            maxInitialRequests: 3,
+            name: true,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: "vendor",
+                    chunks: "initial",
+                    priority: -10
+                },
+                default: {
+                    minChunks: 1,
+                    priority: -20,
+                    reuseExistingChunk: true,
+                }
+            }
+        },
         minimizer: [
             new UglifyJSPlugin({
                 uglifyOptions: {
@@ -28,16 +64,12 @@ const config = {
                 }
             })
         ],
-    },
-    output: {
-        path: resolve('../public'),
-        publicPath: '/',
-        filename: '[name].[hash].js'
+        runtimeChunk: true,
     },
     resolve: {
-        extensions: ['*', '.js', '.json', '.vue'],
+        extensions: ['.js', '.jsx', '.json', '.vue'],
         alias: {
-            '@': resolve('../src'),
+            '@': resolve('./src'),
             'vue$': 'vue/dist/vue.common.js'
         }
     },
@@ -45,7 +77,7 @@ const config = {
         rules: [
             {
                 enforce: "pre",
-                test: /\.js$/,
+                test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 loader: "eslint-loader",
             },
@@ -55,44 +87,22 @@ const config = {
                 options: {hotReload: true}
             },
             {
-                test: /\.js$/,
-                loader: 'babel-loader?cacheDirectory',
-                exclude: /node_modules/
-            },
-            {
-                test: /\.css$/,
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
                 use: [
-                    MiniCssExtractPlugin.loader,
-                    {
-                        loader: 'css-loader',
-                        options: {importLoaders: 1, minimize: {discardComments: {removeAll: true}}}
-                    },
-                    'postcss-loader',
-                ],
-            },
-            {
-                test: /\.(sass|scss)$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    {
-                        loader: 'css-loader',
-                        options: {minimize: {discardComments: {removeAll: true}}}
-                    },
-                    'postcss-loader',
-                    'sass-loader'
-                ],
-            },
-            {
-                test: /\.styl$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    {
-                        loader: 'css-loader',
-                        options: {minimize: {discardComments: {removeAll: true}}}
-                    },
-                    'postcss-loader',
-                    'stylus-loader',
+                    'cache-loader',
+                    'babel-loader?cacheDirectory'
                 ]
+            },
+            {
+                test: /\.(css|sass|scss)$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'cache-loader',
+                    'css-loader',
+                    postcssLoader,
+                    'sass-loader'
+                ].slice(opt.removeCss ? 1 : 0),
             },
             {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
@@ -109,9 +119,9 @@ const config = {
     plugins: [
         new HardSourceWebpackPlugin(),
         new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            "window.jQuery": "jquery"
+            'jQuery': 'jquery',
+            '$': 'jquery',
+            'Popper': 'popper.js',
         }),
         new MiniCssExtractPlugin({
             filename: "[name].[hash].css",
@@ -119,16 +129,6 @@ const config = {
         }),
         new VueLoaderPlugin()
     ]
-}
-
-if (isProd) {
-    config.plugins.push(new CompressionPlugin({
-        asset: "[path].gz[query]",
-        algorithm: "gzip",
-        test: /\.js$|\.css$|\.html$/,
-        threshold: 10240,
-        minRatio: 0.8
-    }))
-}
+})
 
 module.exports = config

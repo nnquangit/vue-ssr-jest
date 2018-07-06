@@ -1,5 +1,5 @@
-import {createApp} from './app'
+import {initApp} from './app'
 
-const {app, $router} = createApp()
+const {app, $router} = initApp()
 
 $router.onReady(() => app.$mount('#app'))

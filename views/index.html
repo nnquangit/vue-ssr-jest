@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="MobileOptimized" content="100"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <% manifest.css.forEach(function(file){ %>
+        <link rel="stylesheet" href="<%-manifest.publicPath+file%>"/>
+        <% }); %>
+    </head>
+    <body>
+        <div id="app"><%-html%></div>
+        <% if (state) { %>
+        <script type="text/javascript">window.__INITIAL_STATE__ = <%-JSON.stringify(state)%>;</script>
+        <% } %>
+        <% manifest.js.forEach(function(file){ %>
+        <script type="text/javascript" src="<%-manifest.publicPath+file%>"></script>
+        <% }); %>
+    </body>
+</html>

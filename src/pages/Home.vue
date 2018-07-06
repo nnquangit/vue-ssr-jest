@@ -14,7 +14,7 @@
     import {vueActions, vueGetters} from 'exstore'
 
     export default {
-        data: () => ({title: 'Wellcome page'}),
+        data: () => ({title: 'Hello world!'}),
         computed: {...vueGetters(['currentCounter'])},
         methods: {...vueActions(['addCounter'])}
     }

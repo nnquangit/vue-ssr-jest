@@ -2,7 +2,7 @@
     <div id="app">
         <b-navbar toggleable="md" type="light" variant="light">
             <b-container>
-                <b-navbar-brand to="/">Brand</b-navbar-brand>
+                <b-navbar-brand to="/"><i class="mdi mdi-home" /></b-navbar-brand>
                 <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
                 <b-collapse is-nav id="nav_collapse">
                     <b-navbar-nav>
